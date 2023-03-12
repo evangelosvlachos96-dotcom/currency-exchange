@@ -32,7 +32,7 @@ router.patch(
   authorizeRoles('admin', 'superuser'),
   updateCurrency
 )
-router.get('/searchCurrencies', authenticateUser, searchCurrencies)
+router.get('/searchCurrencies', searchCurrencies)
 router.get(
   '/getSignleCurrency/:id',
   isCurrencyExists,

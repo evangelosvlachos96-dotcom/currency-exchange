@@ -48,7 +48,6 @@ const convertCurrency = async (req, res) => {
       targetCurrency: { $ne: baseCurrency._id },
     })
 
-    // If exchange rate is not found between base currency and other currencies, or target currency and other currencies, throw error
     if (!baseCurrencyExchange || !targetCurrencyExchange)
       throw new BadRequestError('No exchange rate found')
 
