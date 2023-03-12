@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import Exchange from '../models/Exchange.js'
 import Currency from '../models/Currency.js'
-import { BadRequestError } from '../error/index.js'
+import { BadRequestError, NotFound } from '../error/index.js'
 
 const convertCurrency = async (req, res) => {
   const { baseCurrencyCode, targetCurrencyCode, amount } = req.body
@@ -28,39 +28,28 @@ const convertCurrency = async (req, res) => {
     )
 
   // Find exchange rate between base currency and target currency
-  const exchange = await Exchange.findOne({
+  let exchange = await Exchange.findOne({
     baseCurrency: baseCurrency._id,
     targetCurrency: targetCurrency._id,
   })
 
-  let convertedAmount = amount
-
-  // If exchange rate is found, convert amount
-  if (exchange) convertedAmount = amount * exchange.ratio
-  else {
-    // If no exchange rate is found, find exchange rate between base currency and other currencies, and target currency and other currencies
-    const baseCurrencyExchange = await Exchange.findOne({
-      baseCurrency: baseCurrency._id,
-      targetCurrency: { $ne: targetCurrency._id },
-    })
-    const targetCurrencyExchange = await Exchange.findOne({
+  if (!exchange) {
+    // If no direct exchange rate is found, check if there's an exchange rate between target and base currency
+    exchange = await Exchange.findOne({
       baseCurrency: targetCurrency._id,
-      targetCurrency: { $ne: baseCurrency._id },
+      targetCurrency: baseCurrency._id,
     })
 
-    if (!baseCurrencyExchange || !targetCurrencyExchange)
-      throw new BadRequestError('No exchange rate found')
-
-    // Calculate exchange rate between base currency and target currency using exchange rates of base currency and target currency with other currencies
-    const baseToTargetRate =
-      baseCurrencyExchange.ratio / targetCurrencyExchange.ratio
-    convertedAmount = amount * baseToTargetRate
+    if (exchange) exchange.ratio = 1 / exchange.ratio
+    else throw new NotFound('No exchange found...')
   }
+
+  const convertedAmount = amount * exchange.ratio
 
   res.status(StatusCodes.OK).json({
     result: 'Amount converted.',
     base_currency: baseCurrencyCode.toUpperCase(),
-    targer_currency: targetCurrencyCode.toUpperCase(),
+    target_currency: targetCurrencyCode.toUpperCase(),
     converted_amount: convertedAmount.toFixed(3),
     amount,
   })
