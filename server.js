@@ -9,6 +9,11 @@ import 'express-async-errors'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 
+//security packages
+import helmet from 'helmet'
+import xss from 'xss-clean'
+import mongoSanitize from 'express-mongo-sanitize'
+
 //db connection
 import connectDB from './db/connect.js'
 
@@ -34,6 +39,9 @@ const corsOptions = {
 }
 
 app.use(express.json())
+app.use(helmet())
+app.use(xss())
+app.use(mongoSanitize())
 app.use(cors(corsOptions))
 app.use(cookieParser(process.env.JWT_SECRET))
 

@@ -20,10 +20,13 @@
     "exchange-rates-api": "^1.1.0",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
+    "express-mongo-sanitize": "^2.2.0",
+    "helmet": "^6.0.1",
     "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.1",
     "nodemon": "^2.0.21",
-    "validator": "^13.9.0"
+    "validator": "^13.9.0",
+    "xss-clean": "^0.1.1"
   }
 }
