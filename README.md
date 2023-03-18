@@ -1,5 +1,5 @@
 Currency-Exchange-Server-Side is a server-side application built with Node.js and Express.js that provides real-time exchange rate data to users. 
-The application fetches exchange rate data from the Open Exchange Rates API, and stores it in a MongoDB database.
+The application stores it in a MongoDB database.
 
 The API has multiple endpoints that can be used to fetch data for a specific currency, or for a list of currencies. 
 Users can query the API for the latest exchange rate, or for a historical exchange rate for a specific date. The API also provides an endpoint to
